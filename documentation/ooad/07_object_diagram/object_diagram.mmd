@@ -1,20 +1,26 @@
-# Object Diagram
 
-```mermaid
-classDiagram
+### If you want an actual **Object Diagram**
 
-class Student {
-    studentId
-    name
-    email
-}
+Your current diagram is technically a **Class Diagram**, not an Object Diagram.
 
-class Poster {
-    posterId
-    title
-    abstract
-    status
-}
+For your project, an object-style representation would look conceptually like:
 
-Student "1" --> "0..*" Poster : submits
-```
+```text
++----------------------+
+| Student : student1   |
++----------------------+
+| studentId = S101     |
+| name = Geetanshi     |
+| email = abc@gmail.com|
++----------------------+
+          |
+          | submits
+          ↓
++----------------------+
+| Poster : poster1     |
++----------------------+
+| posterId = P001      |
+| title = AI Research  |
+| abstract = ...       |
+| status = SUBMITTED   |
++----------------------+
