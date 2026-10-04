@@ -1,3 +1,20 @@
 # Object Diagram
 
-*This section is under construction.*
+```mermaid
+classDiagram
+
+class Student {
+    studentId
+    name
+    email
+}
+
+class Poster {
+    posterId
+    title
+    abstract
+    status
+}
+
+Student "1" --> "0..*" Poster : submits
+```
