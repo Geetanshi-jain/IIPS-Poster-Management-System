@@ -1,0 +1,37 @@
+erDiagram
+    USER ||--o{ POSTER : "authors"
+    USER ||--o{ REVIEW_ASSIGNMENT : "evaluates"
+    EVENT ||--o{ POSTER : "contains"
+    POSTER ||--o{ REVIEW_ASSIGNMENT : "has"
+    REVIEW_ASSIGNMENT ||--|| EVALUATION : "yields"
+    
+    USER {
+        int id PK
+        string username
+        string role
+    }
+    EVENT {
+        int id PK
+        string title
+        json criteria_list
+        boolean results_published
+    }
+    POSTER {
+        int id PK
+        string title
+        string status
+        int author_id FK
+        int event_id FK
+    }
+    REVIEW_ASSIGNMENT {
+        int id PK
+        int poster_id FK
+        int reviewer_id FK
+    }
+    EVALUATION {
+        int id PK
+        float total_score
+        string comments
+        json criteria_scores
+        int assignment_id FK
+    }

@@ -1,0 +1,23 @@
+```mermaid
+activityDiagram
+    start
+    :Student logs in;
+    if (Is valid Student?) then (yes)
+        :View Dashboard;
+        :Select Event;
+        :Fill Poster Details (Title, Abstract);
+        :Upload PDF Poster;
+        if (Validation successful?) then (yes)
+            :Submit Poster;
+            :System sets status to SUBMITTED;
+            :Display success message;
+        else (no)
+            :Display error message;
+            stop
+        endif
+    else (no)
+        :Display Access Denied;
+        stop
+    endif
+    stop
+```

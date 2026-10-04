@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor Reviewer
+    participant UI as Reviewer Dashboard
+    participant API as Backend Views (Django)
+    participant DB as SQLite Database
+    
+    Reviewer->>UI: Click "Evaluate Paper"
+    UI->>Reviewer: Open Evaluation Modal
+    Reviewer->>UI: Enter Scores (0-10) & Feedback
+    Reviewer->>UI: Click Submit
+    UI->>API: POST /api/evaluations/submit/ {criteria_scores}
+    API->>API: Calculate total_score = sum(criteria_scores)
+    API->>DB: Save Evaluation Record
+    API->>DB: Update Poster Status to "EVALUATED"
+    DB-->>API: Success
+    API-->>UI: 201 Created (Success)
+    UI-->>Reviewer: Close Modal & Refresh Dashboard

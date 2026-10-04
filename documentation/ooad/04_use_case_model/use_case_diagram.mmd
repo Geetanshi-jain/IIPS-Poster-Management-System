@@ -1,0 +1,31 @@
+graph TD
+    %% Use Case Diagram
+    subgraph IIPS Poster Management System
+        UC1(Register/Login)
+        UC2(Create Event)
+        UC3(Define Criteria)
+        UC4(Submit Poster)
+        UC5(Assign Reviewer)
+        UC6(Evaluate Poster)
+        UC7(Calculate Ranks)
+        UC8(View Leaderboard)
+    end
+    
+    Admin((Admin))
+    Student((Student))
+    Reviewer((Reviewer))
+    
+    Admin --> UC1
+    Admin --> UC2
+    Admin --> UC3
+    Admin --> UC5
+    Admin --> UC7
+    Admin --> UC8
+    
+    Student --> UC1
+    Student --> UC4
+    Student --> UC8
+    
+    Reviewer --> UC1
+    Reviewer --> UC6
+    Reviewer --> UC8

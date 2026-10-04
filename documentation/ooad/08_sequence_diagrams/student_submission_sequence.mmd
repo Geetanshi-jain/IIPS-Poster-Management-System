@@ -1,0 +1,13 @@
+sequenceDiagram
+    actor Student
+    participant ReactUI as React Frontend
+    participant DRF as Django REST API
+    participant DB as SQLite Database
+    
+    Student->>ReactUI: Fill Poster Submission Form
+    ReactUI->>DRF: POST /api/posters/
+    DRF->>DRF: Validate Data (Serializer)
+    DRF->>DB: Save Poster Record
+    DB-->>DRF: Success
+    DRF-->>ReactUI: 201 Created (Poster details)
+    ReactUI-->>Student: Show Success Message

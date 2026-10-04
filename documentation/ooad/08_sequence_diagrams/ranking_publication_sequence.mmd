@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor Admin
+    participant UI as Admin Dashboard
+    participant API as Backend Views (Django)
+    participant DB as SQLite Database
+    
+    Admin->>UI: Click "Calculate Ranks"
+    UI->>API: PUT /api/events/{id}/ (results_published=True)
+    API->>DB: Update Event
+    DB-->>API: Success
+    API-->>UI: 200 OK
+    UI->>API: GET /api/events/{id}/rankings/
+    API->>DB: Fetch Posters & Evaluations
+    DB-->>API: Return Records
+    API->>API: Average Scores, Sort, & Assign Ranks
+    API-->>UI: Return Ranked List JSON
+    UI-->>Admin: Render Leaderboard UI

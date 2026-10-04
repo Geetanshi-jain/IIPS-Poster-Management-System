@@ -1,0 +1,2120 @@
+Abhishek, I recommend using two separate prompts: one to build the complete full-stack application and another to generate your OOAD laboratory documentation in a separate folder. This keeps your working code separate from your diagrams, SRS, SDD and academic report.
+
+Use these prompts with your coding agent (such as Cursor, Claude Code, or another agent that can access your project files).
+
+# Prompt 1 — Build the complete full-stack application
+
+Project: IIPS Student Poster Submission, Evaluation & Research Ranking System
+
+# Project: IIPS Student Poster Submission, Evaluation & Research Ranking System
+
+Act as a senior full-stack software engineer and software architect. Build a complete, functional, maintainable, secure and responsive web application for the IIPS Student Poster Submission, Evaluation & Research Ranking System.
+
+Do not create only a UI mockup or a collection of static pages. Implement the frontend, backend, database models, APIs, authentication, permissions, business logic, validation, tests and setup documentation.
+
+First inspect the existing repository, if any. Preserve working code and follow the existing conventions where reasonable. If starting from scratch, create the project structure specified below. Implement the application incrementally, verify each stage, and fix errors before proceeding.
+
+## 1. Technology stack and mandatory constraints
+
+### Backend
+
+* Python with Django.
+
+* Django REST Framework (DRF) for REST APIs.
+
+* Use **function-based views** for API endpoints, decorated with `@api_view`, `@permission_classes`, `@authentication_classes` and other appropriate DRF decorators.
+
+* Do not use Django REST Framework class-based views, generic views, or viewsets.
+
+* Use Django ORM for database operations.
+
+* Use SQLite as the default database for local development.
+
+* Keep the database configuration ready for PostgreSQL migration using environment variables.
+
+* Use Django migrations to manage schema changes.
+
+* Use appropriate serializers, validators, permissions, service functions and reusable utilities.
+
+* Use Django's secure password hashing and authentication facilities.
+
+### Frontend
+
+* React with Vite.
+
+* JavaScript and JSX unless the existing project already uses TypeScript.
+
+* Tailwind CSS using a version-compatible setup.
+
+* React Router for navigation.
+
+* Axios for HTTP requests, with a centralized API client.
+
+* Reusable components, custom hooks and a clear separation between pages, components and API services.
+
+* Use a chart library such as Recharts for analytics.
+
+* Use a suitable icon library such as Lucide React.
+
+### Configuration
+
+* Store secrets, API keys, database credentials, Django secret key, email credentials and other environment-specific settings in `.env`.
+
+* Provide `.env.example` containing placeholders only.
+
+* Never commit `.env`, uploaded private documents, database files or other secrets to Git.
+
+* Load environment variables through a suitable package such as `django-environ` or `python-decouple`.
+
+* Validate required environment variables in production.
+
+* Do not invent or hardcode external API keys.
+
+* The project must work without external API keys because its core functionality does not require an external AI service.
+
+* Do not add unnecessary paid APIs or external services.
+
+## 2. Project directory structure
+
+Create a maintainable structure similar to:
+
+iips-poster-system/
+backend/
+manage.py
+config/
+settings.py
+urls.py
+wsgi.py
+asgi.py
+apps/
+accounts/
+events/
+submissions/
+reviews/
+analytics/
+notifications/
+audit/
+requirements.txt
+.env.example
+media/
+tests/
+frontend/
+src/
+api/
+assets/
+components/
+hooks/
+layouts/
+pages/
+auth/
+student/
+reviewer/
+admin/
+routes/
+utils/
+App.jsx
+main.jsx
+public/
+package.json
+.env.example
+documentation/
+README.md
+API.md
+.gitignore
+
+You may adjust the structure when justified, but maintain clear separation of concerns. Use Django apps to group related functionality.
+
+Keep the academic OOAD deliverables in a separate top-level `documentation/oo ad/` directory only if needed by the documentation task. Do not mix generated diagrams or academic reports into the source-code directories.
+
+## 3. Project objective
+
+The application manages the complete lifecycle of academic poster competitions at IIPS, DAVV.
+
+An authorized administrator creates and publishes an event. Eligible students browse events, register when required, and submit research posters. Administrators assign reviewers. Reviewers independently evaluate assigned posters using an event-specific rubric. The system calculates final scores, produces event-specific rankings, provides analytics and allows authorized publication of results.
+
+Each poster must belong to exactly one event. Scores, evaluation criteria, reports and rankings must remain associated with the correct event.
+
+The application must support multiple events simultaneously.
+
+## 4. User roles and access control
+
+Implement role-based access control with the following roles:
+
+### Student
+
+* Register and log in.
+
+* View and update permitted profile details.
+
+* Browse published events.
+
+* View event descriptions, deadlines, eligibility rules and research domains.
+
+* Register for events when registration is enabled or required.
+
+* Submit a poster under an eligible event.
+
+* Add co-authors or team members from registered users, subject to eligibility rules.
+
+* View their own submissions and statuses.
+
+* Edit or resubmit submissions only when permitted by event rules.
+
+* View released feedback and published results.
+
+* View notifications.
+
+### Reviewer
+
+* Log in and access the reviewer dashboard.
+
+* View only posters assigned to them.
+
+* View or securely download assigned poster files.
+
+* Save draft evaluations.
+
+* Evaluate posters against the event's rubric.
+
+* Add marks and criterion-level comments.
+
+* Submit a final evaluation.
+
+* View completed reviews and relevant assignment status.
+
+* Never modify another reviewer's evaluation.
+
+### Admin
+
+* Manage users and roles.
+
+* Create, edit, publish, close and archive events.
+
+* Configure event eligibility, dates, domains and submission limits.
+
+* Configure event-specific evaluation rubrics.
+
+* View registrations and submissions for managed events.
+
+* Assign, reassign and track reviewers.
+
+* Monitor review completion.
+
+* Manage revision requests and submission statuses.
+
+* View analytics and event-specific rankings.
+
+* Publish or unpublish results.
+
+* Export permitted reports.
+
+* View audit logs.
+
+Do not rely on hiding frontend buttons for security. Enforce all permissions on the backend.
+
+Use Django authentication with DRF session authentication or another well-configured authentication approach. If using token authentication, select a suitable maintained solution and document token expiration and revocation. For a browser-based application, prefer secure session cookies where practical, with correct CSRF protection.
+
+Never store passwords in plain text or store authentication tokens in browser local storage without a documented security justification.
+
+## 5. Database models and relationships
+
+Implement the following core models. Use descriptive names, appropriate field types, constraints, indexes and timestamps.
+
+### User / profile
+
+Use Django's custom user model from the beginning if possible, with email-based login and a role field.
+
+Suggested fields:
+
+* id
+
+* email
+
+* full_name
+
+* role
+
+* enrollment_number, where applicable
+
+* department
+
+* course
+
+* is_active
+
+* created_at
+
+* updated_at
+
+Use Django's built-in password hashing. Keep role-specific fields organized without duplicating user information unnecessarily.
+
+### Event
+
+Fields:
+
+* id
+
+* title
+
+* description
+
+* created_by
+
+* start_date
+
+* submission_deadline
+
+* review_deadline, if applicable
+
+* registration_required
+
+* eligibility_rules
+
+* max_team_size
+
+* status: DRAFT, PUBLISHED, CLOSED, ARCHIVED
+
+* results_published
+
+* created_at
+
+* updated_at
+
+Only authorized admins can create and publish events.
+
+Validate event dates and prevent invalid publication configurations. Prevent submissions after the configured deadline unless an authorized exception exists.
+
+### EventRegistration
+
+Fields:
+
+* id
+
+* event
+
+* student
+
+* registered_at
+
+* status
+
+Add a uniqueness constraint to prevent duplicate registrations by the same student for the same event.
+
+Support event rules that allow registration to be optional. If registration is not required, a student must still satisfy eligibility and event availability checks.
+
+### EventDomain
+
+Fields:
+
+* id
+
+* event
+
+* domain_name
+
+Prevent duplicate domain names within the same event.
+
+### Poster
+
+Fields:
+
+* id
+
+* event
+
+* submitted_by
+
+* title
+
+* abstract
+
+* research_domain
+
+* file
+
+* status
+
+* submitted_at
+
+* created_at
+
+* updated_at
+
+Poster status should support a clearly defined lifecycle, such as:
+DRAFT, SUBMITTED, UNDER_REVIEW, REVISION_REQUESTED, RESUBMITTED, EVALUATED, ACCEPTED, REJECTED, FINALIZED.
+
+Do not allow arbitrary status changes from the frontend. Implement validated transitions in business logic.
+
+### PosterAuthor
+
+Fields:
+
+* id
+
+* poster
+
+* student
+
+* author_order
+
+Allow one or more student authors. Prevent duplicate authors for the same poster. The submitting student should be represented consistently in the author list.
+
+### RubricCriterion
+
+Fields:
+
+* id
+
+* event
+
+* criterion_name
+
+* description
+
+* max_marks
+
+* weight, if weighted scoring is enabled
+
+* display_order
+
+The rubric should be configurable for each event. Validate that maximum marks and weights are valid and that the configured rubric is consistent before evaluation begins.
+
+Avoid combining raw marks and percentages incorrectly. Define and document a consistent scoring formula.
+
+### ReviewAssignment
+
+Fields:
+
+* id
+
+* poster
+
+* reviewer
+
+* status: ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED
+
+* assigned_at
+
+* updated_at
+
+Prevent duplicate active assignments for the same reviewer and poster. Do not assign the poster's own author as its reviewer. Make reassignment auditable.
+
+### Evaluation
+
+Fields:
+
+* id
+
+* assignment
+
+* total_score
+
+* comments
+
+* status: DRAFT, SUBMITTED
+
+* submitted_at
+
+* created_at
+
+* updated_at
+
+Use a uniqueness constraint so an assignment has at most one evaluation record, with draft editing allowed until submission.
+
+### EvaluationDetail
+
+Fields:
+
+* id
+
+* evaluation
+
+* criterion
+
+* marks_obtained
+
+* feedback
+
+Prevent duplicate details for the same criterion in one evaluation. Validate that the criterion belongs to the poster's event and that the marks are within the permitted range.
+
+### Notification
+
+Fields:
+
+* id
+
+* recipient
+
+* title
+
+* message
+
+* notification_type
+
+* related_event, optional
+
+* related_poster, optional
+
+* is_read
+
+* created_at
+
+### AuditLog
+
+Fields:
+
+* id
+
+* actor
+
+* action
+
+* entity_type
+
+* entity_id
+
+* metadata, where appropriate
+
+* created_at
+
+Keep audit records for significant operations such as reviewer assignment, evaluation submission, result publication and authorized result changes. Do not expose sensitive information through logs.
+
+### Optional models
+
+Introduce additional models only when required:
+
+* PosterRevision or SubmissionVersion for revision history.
+
+* PublishedResultSnapshot for immutable published rankings.
+
+* Team and TeamMember if team registration is treated as a separate entity.
+
+* EventResult or a result snapshot if historical ranking publication must be preserved.
+
+Do not create redundant tables for information that can be calculated reliably.
+
+## 6. Core business rules
+
+Implement these rules in the backend, not just in the UI.
+
+1. Only admins can create or publish events.
+
+2. Only published events can accept submissions.
+
+3. Registration, eligibility, allowed domains and deadlines must be checked on the server.
+
+4. Each poster belongs to one event.
+
+5. Every poster submission must have a valid submitter and an authorized set of authors.
+
+6. Each poster can be assigned to multiple reviewers.
+
+7. Each reviewer can review multiple posters.
+
+8. Reviewers cannot evaluate unassigned posters or their own work.
+
+9. Each reviewer submits an independent evaluation.
+
+10. Each submitted evaluation must include valid marks for all required rubric criteria.
+
+11. Evaluation scores must be calculated server-side. Ignore any client-supplied final score.
+
+12. A final score must only be generated when the event's required reviews are complete.
+
+13. Use the mean of valid completed reviewer scores by default, unless the event has an explicitly configured alternative.
+
+14. Define tie handling consistently, such as equal ranks for equal final scores. Use additional tie-breaking rules only if approved and documented.
+
+15. Rankings must always be scoped to one event.
+
+16. Do not mix posters from different events.
+
+17. Unpublished results must not be exposed to students.
+
+18. Submitted evaluations must be immutable to reviewers unless an authorized reopening process exists.
+
+19. Any administrative override must be authorized and audited.
+
+20. Prevent duplicate submissions or registrations where the configured rules disallow them.
+
+Clearly distinguish poster acceptance status from score and rank. A poster can have a completed score without necessarily being accepted, depending on the event rules.
+
+## 7. Backend API requirements
+
+Build REST APIs using function-based DRF views.
+
+Use serializers for input validation and output representation. Keep business logic in service functions or domain utilities rather than placing all logic in views.
+
+Organize URLs by app and use consistent naming and HTTP status codes.
+
+Implement APIs for:
+
+### Authentication and profile
+
+* Register student
+
+* Login and logout
+
+* Current user profile
+
+* Update permitted profile fields
+
+* Change password where supported
+
+### Events
+
+* List published events
+
+* Event details
+
+* Admin event creation
+
+* Update and publish events
+
+* Close and archive events
+
+* Manage event domains
+
+* Configure event rules
+
+* View event registrations
+
+### Registrations
+
+* Register for an event
+
+* View own registrations
+
+* Cancel registration when permitted
+
+### Posters
+
+* Create draft submission
+
+* Submit poster
+
+* List own submissions
+
+* View permitted poster details
+
+* Edit or resubmit when permitted
+
+* Securely access uploaded files
+
+* View submissions for an event as an authorized admin
+
+### Review assignments
+
+* Assign reviewers
+
+* Reassign reviewers
+
+* List reviewer assignments
+
+* View assigned posters
+
+* Track assignment status
+
+### Evaluations
+
+* Create and save evaluation drafts
+
+* Update evaluation drafts
+
+* Submit final evaluation
+
+* Retrieve submitted evaluations subject to permissions
+
+* Request revisions through the authorized workflow
+
+### Analytics and rankings
+
+* Event-specific submission statistics
+
+* Review completion statistics
+
+* Research-domain distribution
+
+* Department/course participation
+
+* Average scores and score distributions
+
+* Event-specific ranking list
+
+* Publish or unpublish results
+
+* Export CSV reports
+
+### Notifications and audit
+
+* List notifications
+
+* Mark notifications as read
+
+* View authorized audit records
+
+Use pagination, search, filtering, ordering and consistent error response formats where appropriate.
+
+Do not expose private evaluation comments, unpublished results or unauthorized poster files.
+
+## 8. Frontend requirements
+
+Create a professional, modern and responsive university research portal using React and Tailwind CSS.
+
+Use a consistent visual system, accessible colors, clear typography, responsive layouts, loading states, empty states, confirmation dialogs, toast messages and form validation.
+
+Build reusable components for:
+
+* Navigation and sidebar
+
+* Header and profile menu
+
+* Cards and statistic widgets
+
+* Data tables
+
+* Search and filters
+
+* Modal dialogs
+
+* Form fields
+
+* File upload
+
+* Status badges
+
+* Pagination
+
+* Charts
+
+* Error and loading states
+
+### Public pages
+
+* Home page
+
+* Available events
+
+* Event details
+
+* Login and student registration
+
+### Student pages
+
+* Dashboard
+
+* My registrations
+
+* My submissions
+
+* Submit poster form
+
+* Submission details and status timeline
+
+* Feedback and published results
+
+* Notifications
+
+* Profile
+
+### Reviewer pages
+
+* Reviewer dashboard
+
+* Assigned posters
+
+* Poster detail/file viewer
+
+* Evaluation form
+
+* Draft and completed reviews
+
+* Review history
+
+### Admin pages
+
+* Admin dashboard
+
+* Event management
+
+* Create/edit event
+
+* Event-specific management dashboard
+
+* Student and user management
+
+* Registrations and submissions
+
+* Reviewer assignment
+
+* Rubric configuration
+
+* Review monitoring
+
+* Analytics
+
+* Ranking management and publication
+
+* Report export
+
+* Audit logs
+
+The event management dashboard must provide a way to open one event and manage only that event's submissions, reviewers, evaluation progress and rankings.
+
+When a student selects an event, carry the event identifier through the submission workflow. Never accidentally attach a poster to a different event.
+
+Use React Router protected routes for user experience, but always enforce authorization in the backend.
+
+## 9. UI and user experience
+
+The home page should explain the purpose of the platform and display currently available published events.
+
+Each event card should show:
+
+* Event name
+
+* Short description
+
+* Allowed research domains
+
+* Submission deadline
+
+* Eligibility
+
+* Event status
+
+* Registration/submission action
+
+The student submission form should include:
+
+* Event selection or event context
+
+* Poster title
+
+* Abstract
+
+* Research domain
+
+* PDF upload
+
+* Co-author selection
+
+* Validation errors
+
+* Submission confirmation
+
+The reviewer evaluation form should display the poster, its event-specific rubric, maximum marks, input fields for each criterion, feedback fields, total score and draft/final submission actions.
+
+The ranking dashboard should show:
+
+* Rank
+
+* Poster title
+
+* Author/team names
+
+* Final score
+
+* Event filters
+
+* Publication status
+
+Only show ranking details permitted by the event's publication rules.
+
+## 10. File upload security
+
+Posters are uploaded as PDFs by default.
+
+Implement:
+
+* File extension validation
+
+* MIME-type validation
+
+* File size limits configured through settings
+
+* Randomized or safely generated filenames
+
+* Secure storage paths
+
+* Access control before file download
+
+* Safe handling of invalid uploads
+
+* No public access to private submissions by default
+
+Document the storage configuration so cloud object storage can be introduced later without redesigning the entire application.
+
+Do not execute uploaded files or trust a client-provided MIME type alone.
+
+## 11. Analytics and ranking implementation
+
+Create reusable backend service functions for calculating statistics and rankings.
+
+For each event, calculate:
+
+* Total submissions
+
+* Submission status counts
+
+* Review completion percentage
+
+* Average finalized poster score
+
+* Research-domain counts
+
+* Department/course participation
+
+* Reviewer workload
+
+* Final ranking
+
+Use database aggregation where appropriate. Avoid unnecessary queries and N+1 query problems.
+
+Exclude posters with incomplete required reviews from finalized rankings.
+
+Use a documented score calculation:
+
+* Calculate each reviewer's score from criterion-level marks.
+
+* Normalize scores if rubric criteria have different maximum totals.
+
+* Calculate the mean across completed valid reviews.
+
+* Apply ranking rules only to eligible finalized posters.
+
+* Handle equal scores consistently.
+
+Keep the ranking logic reusable and thoroughly tested.
+
+## 12. Security and best practices
+
+Follow Django and DRF security best practices.
+
+* Use Django ORM and parameterized database operations.
+
+* Validate and sanitize inputs appropriately.
+
+* Apply role-based and object-level permissions.
+
+* Protect against CSRF where applicable.
+
+* Configure CORS narrowly.
+
+* Keep `DEBUG=False` in production.
+
+* Use secure cookie settings and HTTPS in production.
+
+* Restrict allowed hosts.
+
+* Do not expose stack traces or secrets in API responses.
+
+* Protect against unauthorized file access and insecure direct object references.
+
+* Avoid mass-assignment vulnerabilities.
+
+* Add throttling to sensitive endpoints as appropriate.
+
+* Never return password hashes or secrets in API responses.
+
+* Use environment variables for configuration.
+
+* Apply database constraints in addition to application validation.
+
+* Use atomic transactions for important multi-step operations.
+
+* Log errors without recording passwords, tokens or sensitive contents.
+
+* Provide clear permission-denied and validation responses.
+
+Do not add unnecessary microservices, complex infrastructure or artificial abstractions. Keep the implementation suitable for an MCA project while following production-minded practices.
+
+## 13. SQLite now, PostgreSQL later
+
+Configure SQLite as the default local database.
+
+Read an environment variable such as `DB_ENGINE` to choose SQLite or PostgreSQL.
+
+For SQLite:
+
+* Use a local `db.sqlite3` file.
+
+* Keep it excluded from Git.
+
+For PostgreSQL:
+
+* Read database name, user, password, host and port from environment variables.
+
+* Use a maintained PostgreSQL driver.
+
+* Document how to install PostgreSQL dependencies and migrate the database.
+
+Provide example configuration in `.env.example` for both database options.
+
+Do not switch to PostgreSQL by default. The application must run using SQLite without requiring PostgreSQL to be installed.
+
+## 14. Testing
+
+Write meaningful tests for:
+
+* Authentication
+
+* Role-based access
+
+* Event creation and publication
+
+* Event eligibility and deadlines
+
+* Registration uniqueness
+
+* Poster submission and PDF validation
+
+* Author/team validation
+
+* Reviewer assignment
+
+* Prevention of self-review
+
+* Evaluation score validation
+
+* Evaluation submission and locking
+
+* Score calculations
+
+* Ranking isolation between events
+
+* Tie handling
+
+* Results publication permissions
+
+* File access permissions
+
+* Analytics endpoints
+
+Use Django's test framework and DRF's API testing utilities. Add frontend tests for important forms and workflows if feasible.
+
+Test both successful requests and failure cases. Do not claim a test passes unless it has actually been executed.
+
+## 15. Developer experience and setup
+
+Provide:
+
+* Backend `requirements.txt`
+
+* Frontend `package.json`
+
+* `.env.example` files
+
+* `.gitignore`
+
+* Django migrations
+
+* Optional development seed-data command
+
+* README with installation and run instructions
+
+* API endpoint documentation
+
+* Test instructions
+
+* Database switching instructions
+
+* Clear explanations of environment variables
+
+Provide a development setup that runs the Django API and React frontend locally in separate terminals.
+
+Do not commit actual secrets. Do not put API keys in React environment variables unless they are explicitly public; all private secrets must remain on the backend.
+
+## 16. Implementation sequence
+
+Work in this order:
+
+1. Inspect the repository and produce a brief implementation plan.
+
+2. Set up Django, DRF, environment configuration and SQLite.
+
+3. Create the custom user model and authentication.
+
+4. Implement event and domain management.
+
+5. Implement registration, poster submissions and authors.
+
+6. Implement reviewer assignments and rubric evaluations.
+
+7. Implement scoring, ranking and analytics.
+
+8. Implement notifications and audit logs.
+
+9. Build the React/Tailwind application and connect it to the APIs.
+
+10. Add tests and run migrations.
+
+11. Test the end-to-end workflow.
+
+12. Write setup and API documentation.
+
+13. Summarize completed features, test results and any remaining limitations.
+
+Do not generate the entire project as one unverified code dump. Work in small, coherent steps. Run the appropriate commands, inspect errors and fix them before moving forward.
+
+## 17. Acceptance criteria
+
+The implementation is complete when the following scenario works:
+
+1. An admin creates and publishes an event.
+
+2. A student views the event and registers if required.
+
+3. The student submits a poster under that event.
+
+4. The admin assigns two reviewers.
+
+5. Both reviewers evaluate the poster using the configured rubric.
+
+6. The backend calculates the final score.
+
+7. The system includes the poster in the correct event's finalized ranking.
+
+8. The admin views analytics and publishes results.
+
+9. The student can view permitted feedback and published results.
+
+10. Users cannot access resources or perform operations outside their permissions.
+
+11. The project runs with SQLite using documented setup commands.
+
+12. Automated tests cover the core business rules.
+
+Begin by inspecting the current repository and presenting a short plan. Then implement the application systematically, keeping the code functional at every stage.
+
+# Prompt 2 — Generate all OOAD documentation in a separate folder
+
+This prompt is for your academic deliverables. It instructs the coding agent to produce the diagrams, reports and design documents based on the actual application design, rather than inventing a different system.
+
+Task: Complete OOAD Laboratory Documentation
+
+# Task: Complete OOAD Laboratory Documentation
+
+Act as a software architect, UML specialist and academic technical writer.
+
+Prepare the complete Object-Oriented Analysis & Design (OOAD) Laboratory documentation for the project:
+
+**IIPS Student Poster Submission, Evaluation & Research Ranking System**
+
+The application manages research poster events, student registrations, poster submissions, reviewer assignments, rubric-based evaluation, research analytics and event-specific rankings.
+
+The backend uses Django and Django REST Framework with function-based API views. The frontend uses React and Tailwind CSS. SQLite is the default development database, with a planned migration path to PostgreSQL.
+
+Your task is to create a complete, well-organized academic documentation package suitable for an MCA OOAD laboratory submission and final presentation.
+
+IMPORTANT:
+
+* Inspect the actual source code and database models if they exist.
+
+* If the application has not yet been implemented, use the agreed project requirements and database design as the source of truth.
+
+* Do not claim that unimplemented features already work.
+
+* Keep all documentation separate from application source code.
+
+* Ensure that all diagrams use consistent actor names, class names, relationships, status names and terminology.
+
+* Do not invent institutional policies, real user data or actual evaluation results.
+
+* Mark assumptions and illustrative data clearly.
+
+* Prefer editable source files for diagrams alongside rendered exports.
+
+## 1. Required directory structure
+
+Create the documentation in a separate top-level folder:
+
+documentation/
+ooad/
+README.md
+01_problem_statement/
+problem_statement.md
+objectives.md
+scope_and_limitations.md
+02_stakeholder_analysis/
+stakeholder_analysis.md
+stakeholder_matrix.md
+03_srs/
+software_requirements_specification.md
+functional_requirements.md
+non_functional_requirements.md
+business_rules.md
+assumptions_and_constraints.md
+04_use_case_model/
+use_case_diagram.mmd
+use_case_specifications.md
+05_activity_diagrams/
+student_submission_activity.mmd
+reviewer_evaluation_activity.mmd
+result_publication_activity.mmd
+06_class_diagram/
+class_diagram.mmd
+class_relationships.md
+07_object_diagram/
+object_diagram.mmd
+object_diagram_explanation.md
+08_sequence_diagrams/
+student_submission_sequence.mmd
+reviewer_evaluation_sequence.mmd
+ranking_publication_sequence.mmd
+09_communication_diagram/
+communication_diagram.mmd
+communication_diagram_explanation.md
+10_state_machine/
+poster_state_machine.mmd
+event_state_machine.mmd
+state_transitions.md
+11_package_diagram/
+package_diagram.mmd
+package_explanation.md
+12_component_diagram/
+component_diagram.mmd
+component_explanation.md
+13_deployment_diagram/
+deployment_diagram.mmd
+deployment_explanation.md
+14_database_design/
+er_diagram.mmd
+relational_schema.md
+data_dictionary.md
+integrity_constraints.md
+15_ui_wireframes/
+wireframes.md
+wireframe_assets/
+16_layered_architecture/
+layered_architecture.mmd
+architecture_explanation.md
+17_design_patterns/
+design_patterns.md
+18_sdd/
+software_design_document.md
+19_prototype/
+prototype_description.md
+prototype_test_scenarios.md
+20_github_and_version_control/
+github_repository_guide.md
+git_workflow.md
+21_testing/
+test_plan.md
+test_cases.md
+traceability_matrix.md
+22_project_documentation/
+installation_guide.md
+user_manual.md
+api_overview.md
+23_final_presentation/
+presentation_outline.md
+viva_questions_and_answers.md
+demo_script.md
+assets/
+rendered_diagrams/
+tables/
+screenshots/
+
+Adjust the directory structure only when necessary. Do not place the documentation inside the backend or frontend source folders.
+
+## 2. Problem statement
+
+Write a clear academic problem statement describing the challenges of manually managing:
+
+* Poster competition events.
+
+* Student registrations.
+
+* Research poster submissions.
+
+* Reviewer assignment.
+
+* Consistent evaluation criteria.
+
+* Score aggregation.
+
+* Ranking and result publication.
+
+* Research participation analytics.
+
+Explain why a centralized system is needed.
+
+Include:
+
+* Background.
+
+* Existing problem.
+
+* Proposed solution.
+
+* Objectives.
+
+* Scope.
+
+* Out-of-scope features.
+
+* Expected benefits.
+
+* Project limitations.
+
+Use formal but understandable English appropriate for an MCA student. Do not assert that IIPS currently has a particular manual process unless confirmed; describe manual handling as the problem scenario the proposed system aims to address.
+
+## 3. Stakeholder analysis
+
+Identify and explain:
+
+* Student.
+
+* Reviewer/faculty member.
+
+* Administrator.
+
+* Event coordinator or HOD, if enabled.
+
+* System maintainer.
+
+For each stakeholder, document:
+
+* Role.
+
+* Goals.
+
+* Responsibilities.
+
+* Required system interactions.
+
+* Permissions.
+
+* Main concerns.
+
+Create a stakeholder matrix and identify which stakeholders initiate, perform or approve important workflows.
+
+## 4. Software Requirements Specification
+
+Prepare a structured SRS with:
+
+* Introduction.
+
+* Purpose.
+
+* Scope.
+
+* Definitions and abbreviations.
+
+* Product perspective.
+
+* Product functions.
+
+* User classes and characteristics.
+
+* Operating environment.
+
+* Assumptions and dependencies.
+
+* Functional requirements.
+
+* Non-functional requirements.
+
+* External interface requirements.
+
+* Data requirements.
+
+* Security requirements.
+
+* Business rules.
+
+* Acceptance criteria.
+
+Assign unique identifiers to requirements, for example:
+
+* FR-001 for functional requirements.
+
+* NFR-001 for non-functional requirements.
+
+* BR-001 for business rules.
+
+Functional requirements must cover event management, registration, poster submission, reviewer assignment, rubric evaluation, score calculation, analytics, rankings, notifications and audit history.
+
+Non-functional requirements must cover security, usability, maintainability, performance, reliability, data integrity and accessibility.
+
+Write testable requirements instead of vague statements. Do not invent numeric performance targets without identifying them as proposed targets.
+
+## 5. Use case model
+
+Create a UML use case diagram and detailed use case specifications.
+
+Actors:
+
+* Student.
+
+* Reviewer.
+
+* Admin.
+
+* Optional Event Coordinator.
+
+Use cases should include:
+
+* Register/Login.
+
+* Browse Events.
+
+* View Event Details.
+
+* Register for Event.
+
+* Submit Poster.
+
+* Manage Submission.
+
+* View Submission Status.
+
+* Create Event.
+
+* Publish Event.
+
+* Configure Rubric.
+
+* Assign Reviewer.
+
+* Review Assigned Poster.
+
+* Save Evaluation Draft.
+
+* Submit Evaluation.
+
+* Request Revision.
+
+* View Analytics.
+
+* Generate Event Ranking.
+
+* Publish Results.
+
+* View Published Results.
+
+* Manage Notifications.
+
+* View Audit History.
+
+For each important use case, include:
+
+* Use case ID and name.
+
+* Primary actor.
+
+* Preconditions.
+
+* Trigger.
+
+* Main flow.
+
+* Alternative flows.
+
+* Exception flows.
+
+* Postconditions.
+
+* Related functional requirements.
+
+Clearly distinguish optional registration from poster submission. Document the applicable event rules.
+
+## 6. Activity diagrams
+
+Create UML activity diagrams for:
+
+1. Student event selection and poster submission.
+
+2. Reviewer evaluation and scoring.
+
+3. Admin result publication.
+
+Show:
+
+* Initial node.
+
+* Actions.
+
+* Decision nodes.
+
+* Alternative branches.
+
+* Error handling.
+
+* Final node.
+
+Use swimlanes where they improve clarity, especially for Student, System, Reviewer and Admin interactions.
+
+## 7. Class diagram
+
+Create a UML class diagram with meaningful attributes, operations and associations.
+
+Consider these domain classes:
+
+* User.
+
+* Event.
+
+* EventRegistration.
+
+* EventDomain.
+
+* Poster.
+
+* PosterAuthor.
+
+* RubricCriterion.
+
+* ReviewAssignment.
+
+* Evaluation.
+
+* EvaluationDetail.
+
+* Notification.
+
+* AuditLog.
+
+Show:
+
+* Primary domain responsibilities.
+
+* Relevant attributes and methods.
+
+* Association names.
+
+* Multiplicities.
+
+* Inheritance only where justified.
+
+* Composition and aggregation only when semantically appropriate.
+
+* Foreign-key relationships where useful.
+
+Keep Django infrastructure details separate from the domain model where appropriate.
+
+The class diagram must match the agreed database design and actual models if implemented.
+
+## 8. Object diagram
+
+Create an object diagram representing one concrete example:
+
+* One research poster event.
+
+* Two student users.
+
+* Two poster submissions.
+
+* Two reviewers.
+
+* Relevant review assignments.
+
+* Evaluation records.
+
+Use clearly labeled illustrative object names, such as `event101:Event` and `poster501:Poster`.
+
+Show actual example attribute values and links between instances.
+
+Explain how the object diagram differs from the class diagram.
+
+## 9. Sequence diagrams
+
+Create UML sequence diagrams for:
+
+1. Student submits a poster.
+
+2. Reviewer evaluates an assigned poster.
+
+3. Admin publishes event rankings.
+
+Include the relevant participants:
+
+* User/browser.
+
+* React frontend.
+
+* Django REST API.
+
+* Authentication/permission layer.
+
+* Service/business logic.
+
+* Django ORM/database.
+
+* File storage where applicable.
+
+Show request/response messages, validation, database operations, successful outcomes and relevant error branches.
+
+Use appropriate UML `alt`, `opt` and `loop` fragments when supported.
+
+The diagrams must reflect function-based DRF API endpoints and the actual layered architecture.
+
+## 10. Communication diagram
+
+Create a UML communication diagram for one important workflow, preferably poster evaluation.
+
+Show:
+
+* Participating objects.
+
+* Links between objects.
+
+* Numbered messages indicating interaction order.
+
+* The responsibilities of each object.
+
+Do not merely duplicate the sequence diagram without showing the communication structure.
+
+Provide a written explanation of message numbering and relationships.
+
+## 11. State machine diagrams
+
+Create:
+
+* Poster submission state machine.
+
+* Event lifecycle state machine.
+
+For posters, consider states such as:
+DRAFT, SUBMITTED, UNDER_REVIEW, REVISION_REQUESTED, RESUBMITTED, EVALUATED, ACCEPTED, REJECTED and FINALIZED.
+
+For events, consider:
+DRAFT, PUBLISHED, CLOSED and ARCHIVED.
+
+Document the valid transitions, triggering actions, guards and responsible actors.
+
+Do not treat all states as interchangeable. Distinguish submission status from acceptance outcome, evaluation completion and ranking publication wherever necessary.
+
+Ensure that the state machine reflects actual implemented business rules.
+
+## 12. Package diagram
+
+Create a UML package diagram showing logical application packages, such as:
+
+* Accounts.
+
+* Event Management.
+
+* Registration.
+
+* Poster Submission.
+
+* Review and Evaluation.
+
+* Analytics and Ranking.
+
+* Notifications.
+
+* Audit.
+
+* Shared Utilities.
+
+Show package dependencies and explain the dependency direction.
+
+Use the actual Django app structure if available. Do not invent packages that do not exist without identifying them as proposed design packages.
+
+## 13. Component diagram
+
+Show the major runtime/software components:
+
+* React frontend.
+
+* Django REST API.
+
+* Authentication and authorization.
+
+* Event and submission services.
+
+* Review and evaluation services.
+
+* Analytics and ranking services.
+
+* Database.
+
+* File storage.
+
+* Optional email/notification provider.
+
+Show interfaces and dependencies.
+
+Distinguish actual components from optional future integrations.
+
+## 14. Deployment diagram
+
+Create a deployment diagram for local development and explain the production deployment alternative.
+
+Local setup should include:
+
+* User browser.
+
+* React development server.
+
+* Django development server.
+
+* SQLite database file.
+
+* Local media/file storage.
+
+The production alternative may include:
+
+* Web server/reverse proxy.
+
+* React static build.
+
+* Django application server.
+
+* PostgreSQL.
+
+* Protected media/object storage.
+
+Clearly label SQLite as the current default and PostgreSQL as the planned production or future database option.
+
+Do not imply that PostgreSQL or cloud infrastructure is already deployed.
+
+## 15. Database design
+
+Create:
+
+* ER diagram.
+
+* Relational schema.
+
+* Data dictionary.
+
+* Integrity constraints.
+
+* Relationship explanations.
+
+Use these core entities:
+
+* Users.
+
+* Events.
+
+* EventRegistrations.
+
+* EventDomains.
+
+* Posters.
+
+* PosterAuthors.
+
+* RubricCriteria.
+
+* ReviewAssignments.
+
+* Evaluations.
+
+* EvaluationDetails.
+
+* Notifications.
+
+* AuditLogs.
+
+Document primary keys, foreign keys, uniqueness constraints, nullable fields, field types and delete behavior.
+
+Explain:
+
+* One event has many posters.
+
+* One student can participate in many events.
+
+* Posters and reviewers have a many-to-many relationship implemented by ReviewAssignments.
+
+* Each assignment has at most one evaluation record.
+
+* Each evaluation contains multiple criterion-level details.
+
+* Rankings are calculated separately for each event.
+
+Describe the scoring formula and the treatment of incomplete evaluations.
+
+Do not add a redundant ranking table unless persistent result snapshots are required.
+
+## 16. UI mockups and wireframes
+
+Prepare wireframes for:
+
+* Home page.
+
+* Event listing and event details.
+
+* Login and registration.
+
+* Student dashboard.
+
+* Poster submission form.
+
+* Submission details/status page.
+
+* Reviewer dashboard.
+
+* Poster evaluation page.
+
+* Admin dashboard.
+
+* Event creation/edit page.
+
+* Reviewer assignment page.
+
+* Rubric management.
+
+* Analytics dashboard.
+
+* Ranking dashboard.
+
+Prefer editable wireframe files or simple SVG/HTML assets plus Markdown explanations.
+
+Show basic navigation, major fields, buttons, tables, alerts and status indicators.
+
+Do not claim that static wireframes are functioning application screens.
+
+## 17. Layered architecture
+
+Document a practical layered architecture:
+
+Presentation layer:
+React components, pages, routing and API client.
+
+API/interface layer:
+Django REST Framework function-based views, request handling and response formatting.
+
+Validation and serialization layer:
+DRF serializers and reusable validators.
+
+Business logic layer:
+Service functions for event rules, submissions, reviewer assignments, evaluation scoring and ranking.
+
+Data access layer:
+Django ORM and database constraints.
+
+Infrastructure layer:
+SQLite/PostgreSQL, file storage, environment configuration and optional notification integrations.
+
+Explain responsibilities, dependencies and why business logic should not be duplicated across React and Django.
+
+Keep the architecture proportionate to the project's size.
+
+## 18. Design patterns
+
+Identify and explain only patterns that are genuinely useful.
+
+Consider:
+
+* Service Layer for business workflows.
+
+* Repository-style abstraction only where it provides real value beyond Django ORM.
+
+* Strategy Pattern if multiple scoring strategies are actually supported.
+
+* State-transition logic for event and poster lifecycles.
+
+* Dependency injection where useful for testing integrations.
+
+* Reusable component patterns in React.
+
+For each pattern, include:
+
+* Problem addressed.
+
+* Why it fits the project.
+
+* Proposed or actual implementation location.
+
+* Small illustrative example.
+
+* Benefits and trade-offs.
+
+Do not claim that every named pattern has been implemented unless the source code proves it.
+
+## 19. Software Design Document
+
+Create a comprehensive SDD containing:
+
+* Purpose and scope.
+
+* System overview.
+
+* Architecture.
+
+* Component design.
+
+* Class design.
+
+* Database design.
+
+* API design.
+
+* Authentication and authorization.
+
+* Business logic.
+
+* Evaluation scoring and ranking algorithms.
+
+* File handling.
+
+* Error handling.
+
+* Security considerations.
+
+* Performance and maintainability considerations.
+
+* Deployment design.
+
+* Testing strategy.
+
+* Limitations and future enhancements.
+
+Include references to relevant diagrams using relative file paths.
+
+## 20. Prototype documentation
+
+Describe the prototype workflows and define test scenarios for:
+
+* Creating and publishing an event.
+
+* Registering for an event.
+
+* Submitting a poster.
+
+* Assigning multiple reviewers.
+
+* Completing evaluations.
+
+* Calculating final scores.
+
+* Publishing rankings.
+
+* Preventing cross-event ranking contamination.
+
+* Preventing unauthorized access.
+
+If screenshots of a working prototype are available, include them. Otherwise, provide placeholders or instructions for capturing screenshots after implementation.
+
+Never fabricate screenshots or test execution results.
+
+## 21. GitHub repository documentation
+
+Prepare:
+
+* Repository description.
+
+* Suggested README structure.
+
+* Setup instructions.
+
+* Branching strategy.
+
+* Commit message conventions.
+
+* Pull request checklist.
+
+* `.gitignore` recommendations.
+
+* Instructions for storing `.env.example` without committing actual secrets.
+
+Do not create or publish a remote GitHub repository unless explicitly authorized.
+
+## 22. Testing and traceability
+
+Create a test plan and detailed test cases.
+
+Include:
+
+* Test ID.
+
+* Requirement ID.
+
+* Preconditions.
+
+* Test inputs.
+
+* Steps.
+
+* Expected result.
+
+* Actual result/status placeholder.
+
+Cover successful flows, invalid input, permissions, event deadlines, duplicate registration, reviewer assignment, scoring boundaries, incomplete reviews and publication restrictions.
+
+Create a requirements traceability matrix mapping:
+requirements → use cases → diagrams → API endpoints → tests.
+
+Do not mark a test as passed unless it has actually been executed and its outcome is known.
+
+## 23. Final presentation and viva
+
+Prepare:
+
+* Presentation outline of approximately 10–15 slides.
+
+* Project introduction and problem statement.
+
+* Objectives and scope.
+
+* Stakeholders.
+
+* Requirements.
+
+* Architecture and database design.
+
+* UML diagrams.
+
+* UI screenshots or wireframes.
+
+* Main workflow demonstration.
+
+* Testing.
+
+* Limitations and future scope.
+
+* Conclusion.
+
+Prepare simple, accurate viva questions and answers covering:
+
+* OOAD fundamentals.
+
+* UML diagrams.
+
+* ER relationships.
+
+* Class vs object diagrams.
+
+* Sequence vs communication diagrams.
+
+* Functional vs non-functional requirements.
+
+* Layered architecture.
+
+* Design patterns.
+
+* Django and DRF.
+
+* SQLite vs PostgreSQL.
+
+* Authentication and authorization.
+
+* Score calculation and ranking.
+
+Write answers in understandable English appropriate for an MCA student.
+
+Provide a demonstration script that walks through one complete event from creation to result publication.
+
+## 24. Diagram format and validation
+
+Prefer Mermaid for diagrams where its syntax can express the required relationships correctly.
+
+Use:
+
+* Mermaid flowcharts for activity-style workflows when UML activity syntax is unavailable.
+
+* Mermaid class diagrams for class models.
+
+* Mermaid sequence diagrams for interactions.
+
+* Mermaid ER diagrams for relational data.
+
+* Mermaid state diagrams for lifecycles.
+
+* Mermaid component-style flowcharts or PlantUML for UML diagrams that Mermaid cannot represent precisely.
+
+If a diagram cannot be accurately represented in Mermaid, use PlantUML source instead. Do not label an ordinary flowchart as a complete UML component or deployment diagram when the notation is insufficient.
+
+Keep every source diagram editable. Render PNG, SVG or PDF exports where the required tools are available.
+
+Validate syntax where practical and fix broken diagrams.
+
+## 25. Consistency and quality control
+
+Before finishing:
+
+1. Check every file exists and contains meaningful content.
+
+2. Verify that entity names and relationships match the source code or agreed design.
+
+3. Verify that requirements have unique identifiers.
+
+4. Verify that use cases trace to functional requirements.
+
+5. Verify that database relationships match the ER diagram and relational schema.
+
+6. Verify that status transitions match business rules.
+
+7. Verify that API and architecture descriptions match function-based DRF views.
+
+8. Clearly label assumptions and future features.
+
+9. Avoid duplicate or contradictory documentation.
+
+10. Provide a root README listing all deliverables and explaining how to view the diagrams.
+
+Create complete, readable documentation rather than empty templates or headings without explanations.
+
+Begin by inspecting the repository and reporting which documentation can be based on implemented code and which sections will need to use the proposed design. Then create the documentation systematically and validate the generated files.
+
+## 3. Recommended execution order
+
+Use the prompts in this order so the academic diagrams do not contradict the actual application.
+
+1. Build the backend foundation first. Set up Django, DRF, the custom user model, SQLite and migrations.
+
+2. Implement the complete event workflow. Add event creation, registrations, submissions, reviewers, evaluations and rankings.
+
+3. Build the React frontend. Connect the dashboards and forms to the actual APIs.
+
+4. Run tests and verify the workflow. Check that separate events have separate submissions and rankings.
+
+5. Run Prompt 2. Generate the OOAD diagrams and documents based on the implemented models and endpoints.
+
+6. Review the final submission. Export diagrams, capture real prototype screenshots and complete the presentation.
+
+## 4. A few important technical decisions
+
+* Function-based views: Both prompts explicitly require DRF function-based views, not API view classes or viewsets.
+
+* SQLite first: Your application will run locally without requiring a PostgreSQL installation. Later, switch through environment configuration and migrate the data.
+
+* Separate documentation folder: All OOAD deliverables live in `documentation/ooad/`, separate from the backend and frontend.
+
+* No unnecessary AI integration: The project can be fully functional without paid APIs. Add AI-based plagiarism detection or research classification only if your supervisor requires it.
+
+* Scoring consistency: Define the rubric and score calculation before implementing ranking. The backend, database and documentation must all use the same formula.
+
+One final suggestion: ask your coding agent to finish and test each major phase before moving on. A complete, working submission-to-ranking workflow is more valuable for your demonstration than a large codebase containing unfinished features.
+
+
+Continue developing my existing **IIPS Student Poster Submission, Evaluation & Research Ranking System**. The basic setup and initial code are already done, so first inspect the existing repository and implement only the missing functionalities. Do not recreate the project or overwrite working code.
+
+**Tech stack and constraints:**
+
+* Backend: Django + Django REST Framework, using function-based API views only (`@api_view`).
+* Frontend: React + Tailwind CSS.
+* Database: SQLite by default, with configuration ready for PostgreSQL migration.
+* Use `.env` for secrets and environment-specific settings.
+
+**Implement the following end-to-end functionalities:**
+
+1. **Event Management:** Admin can create, edit, publish and close events; configure deadlines, eligibility, research domains, maximum team size and registration requirements.
+2. **Student Registration and Poster Submission:** Students can browse events, register when required, upload PDF posters, add co-authors and track submission status. Enforce event eligibility and deadlines.
+3. **Reviewer Assignment:** Admin can assign multiple reviewers to each poster, reassign reviewers and track review progress.
+4. **Rubric-Based Evaluation:** Admin configures event-specific evaluation criteria. Reviewers evaluate assigned posters, enter criterion-wise marks and feedback, save drafts and submit final evaluations.
+5. **Automatic Scoring and Ranking:** Calculate scores on the backend, average completed reviewer scores, handle ties consistently and generate separate rankings for each event. Exclude submissions with incomplete required reviews.
+6. **Analytics Dashboard:** Display submission counts, review completion, average scores, research-domain statistics and department-wise participation using charts and filters.
+7. **Result Publication:** Admin can publish or hide event rankings. Students can view permitted feedback and results only after publication.
+8. **Role-Based Access:** Enforce student, reviewer and admin permissions on the backend. Prevent unauthorized access to posters, evaluations, unpublished results and administrative functions.
+9. **Supporting Features:** Add in-app notifications, basic audit logs, pagination, search, form validation, meaningful error messages and CSV report export where appropriate.
+
+**Implementation requirements:**
+
+* Reuse existing models, components, APIs and project structure wherever possible.
+* Add or modify Django models, serializers, function-based views, URLs, migrations and React pages as required.
+* Keep business logic in reusable service functions rather than duplicating it in views.
+* Apply secure PDF upload validation, database constraints and appropriate error handling.
+* Use environment variables for configuration; do not hardcode secrets.
+* Add tests for important business rules, permissions, scoring and event-specific ranking.
+* Update the existing README with setup instructions and newly implemented features.
+
+**Execution:** First identify what is already implemented and what is missing. Then implement the missing features incrementally, connect the frontend to the backend APIs, run migrations and tests, fix errors, and verify the complete workflow: Admin creates event → Student submits poster → Admin assigns reviewers → Reviewers evaluate → System calculates scores → Admin publishes rankings.
+
+Keep the code simple, readable and maintainable, following Django and React best practices. Do not introduce unnecessary dependencies, paid APIs or unrelated features. At the end, summarize the changes made, tests executed and any remaining incomplete functionality.

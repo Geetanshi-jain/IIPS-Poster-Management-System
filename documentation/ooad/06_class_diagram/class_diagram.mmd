@@ -1,0 +1,52 @@
+classDiagram
+    class User {
+        +int id
+        +string username
+        +string email
+        +string role
+        +login()
+        +logout()
+    }
+    
+    class Event {
+        +int id
+        +string title
+        +date start_date
+        +date end_date
+        +bool is_published
+        +bool results_published
+        +list criteria_list
+        +createEvent()
+        +publishResults()
+    }
+    
+    class Poster {
+        +int id
+        +string title
+        +string abstract
+        +string status
+        +submit()
+        +updateStatus()
+    }
+    
+    class ReviewAssignment {
+        +int id
+        +date assigned_date
+        +string status
+        +assign()
+    }
+    
+    class Evaluation {
+        +int id
+        +float total_score
+        +string comments
+        +dict criteria_scores
+        +submitScore()
+    }
+    
+    User "1" -- "*" Event : Admin Creates
+    User "1" -- "*" Poster : Student Submits
+    User "1" -- "*" ReviewAssignment : Reviewer Handles
+    Event "1" *-- "*" Poster : Contains
+    Poster "1" *-- "*" ReviewAssignment : Has
+    ReviewAssignment "1" -- "1" Evaluation : Yields

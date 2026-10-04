@@ -1,0 +1,12 @@
+stateDiagram-v2
+    [*] --> AdminLogin
+    AdminLogin --> AdminDashboard
+    AdminDashboard --> SelectEvent : Click "Calculate Ranks"
+    SelectEvent --> FetchPosters : Retrieve EVALUATED posters
+    FetchPosters --> FetchEvaluations : Retrieve associated evaluations
+    FetchEvaluations --> CalculateAverage : (Sum of total_scores) / (Count)
+    CalculateAverage --> SortDescending : Order by Average Score
+    SortDescending --> AssignRanks : Resolve ties (assign same rank)
+    AssignRanks --> UpdateEvent : Set results_published = True
+    UpdateEvent --> RenderLeaderboard : Display UI
+    RenderLeaderboard --> [*]

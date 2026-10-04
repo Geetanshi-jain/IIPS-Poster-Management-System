@@ -1,0 +1,27 @@
+graph TD
+    subgraph Presentation Layer [Frontend - React/Vite]
+        ReactUI(React Components)
+        TailwindCSS(Tailwind CSS)
+        AxiosClient(Axios API Client)
+    end
+    
+    subgraph Application Layer [Backend - Django/DRF]
+        APIViews(DRF API Views)
+        Serializers(DRF Serializers)
+        AuthJWT(SimpleJWT Authentication)
+    end
+    
+    subgraph Data Access Layer [Database]
+        DjangoORM(Django ORM)
+        SQLiteDB[(SQLite Database)]
+    end
+    
+    ReactUI --> TailwindCSS
+    ReactUI --> AxiosClient
+    
+    AxiosClient -- HTTP Requests --> APIViews
+    APIViews --> AuthJWT
+    APIViews --> Serializers
+    Serializers --> DjangoORM
+    
+    DjangoORM -- SQL Queries --> SQLiteDB

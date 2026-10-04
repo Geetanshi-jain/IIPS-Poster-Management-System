@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> Login
+    Login --> ViewDashboard
+    ViewDashboard --> SelectPoster : Click "Evaluate Paper"
+    SelectPoster --> OpenModal : Render Criteria Form
+    OpenModal --> InputScores : Enter 0-10 for each criterion
+    InputScores --> InputFeedback : Enter qualitative comments
+    InputFeedback --> SubmitEvaluation
+    SubmitEvaluation --> UpdateDatabase : Save Scores & Feedback
+    UpdateDatabase --> CalculateTotal : Sum Criteria Scores
+    CalculateTotal --> UpdatePosterStatus : Status = EVALUATED
+    UpdatePosterStatus --> ViewDashboard : Return to Dashboard
+    ViewDashboard --> [*]

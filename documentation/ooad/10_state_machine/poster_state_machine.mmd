@@ -1,0 +1,7 @@
+stateDiagram-v2
+    [*] --> DRAFT : Create Poster
+    DRAFT --> SUBMITTED : Click Submit
+    SUBMITTED --> UNDER_REVIEW : Reviewer Assigned
+    UNDER_REVIEW --> EVALUATED : Reviewer Submits Scores
+    EVALUATED --> RANKED : Admin Calculates Ranks
+    RANKED --> [*]
