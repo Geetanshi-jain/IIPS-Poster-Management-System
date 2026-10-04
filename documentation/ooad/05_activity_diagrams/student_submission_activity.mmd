@@ -1,23 +1,20 @@
-```mermaid
-activityDiagram
-    start
-    :Student logs in;
-    if (Is valid Student?) then (yes)
-        :View Dashboard;
-        :Select Event;
-        :Fill Poster Details (Title, Abstract);
-        :Upload PDF Poster;
-        if (Validation successful?) then (yes)
-            :Submit Poster;
-            :System sets status to SUBMITTED;
-            :Display success message;
-        else (no)
-            :Display error message;
-            stop
-        endif
-    else (no)
-        :Display Access Denied;
-        stop
-    endif
-    stop
-```
+flowchart TD
+    A([Start]) --> B[Student logs in]
+    B --> C{Is valid Student?}
+
+    C -- Yes --> D[View Dashboard]
+    C -- No --> E[Display Access Denied]
+    E --> Z([End])
+
+    D --> F[Select Event]
+    F --> G[Fill Poster Details<br/>Title, Abstract]
+    G --> H[Upload PDF Poster]
+    H --> I{Validation successful?}
+
+    I -- Yes --> J[Submit Poster]
+    J --> K[System sets status to SUBMITTED]
+    K --> L[Display Success Message]
+    L --> Z
+
+    I -- No --> M[Display Error Message]
+    M --> Z
