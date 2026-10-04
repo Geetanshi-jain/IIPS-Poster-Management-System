@@ -7,6 +7,7 @@ export default function StudentDashboard() {
   const [posters, setPosters] = useState([]);
   const [newPosterTitle, setNewPosterTitle] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('');
+  const [pdfFile, setPdfFile] = useState(null);
 
   useEffect(() => {
     api.get('events/').then(res => {
@@ -19,14 +20,21 @@ export default function StudentDashboard() {
   const handleSubmitPoster = async (e) => {
     e.preventDefault();
     try {
-      await api.post('posters/', {
-        title: newPosterTitle,
-        event: selectedEvent,
-        abstract: 'Detailed abstract of the research.',
-        status: 'SUBMITTED'
+      const formData = new FormData();
+      formData.append('title', newPosterTitle);
+      formData.append('event', selectedEvent);
+      formData.append('abstract', 'Detailed abstract of the research.');
+      formData.append('status', 'SUBMITTED');
+      if (pdfFile) {
+        formData.append('pdf_file', pdfFile);
+      }
+
+      await api.post('posters/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       alert('Poster Submitted Successfully!');
       setNewPosterTitle('');
+      setPdfFile(null);
       const pRes = await api.get('posters/');
       setPosters(pRes.data);
     } catch (err) {
@@ -53,6 +61,10 @@ export default function StudentDashboard() {
               <div>
                 <label className="block text-sm font-semibold mb-1 text-gray-700">Poster Title</label>
                 <input className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g. AI in Healthcare" value={newPosterTitle} onChange={e => setNewPosterTitle(e.target.value)} required />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1 text-gray-700">Upload Poster (PDF)</label>
+                <input type="file" accept="application/pdf" className="w-full border p-2 rounded-lg bg-gray-50" onChange={e => setPdfFile(e.target.files[0])} />
               </div>
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-bold shadow-md transition-colors mt-2">Submit Poster</button>
             </form>

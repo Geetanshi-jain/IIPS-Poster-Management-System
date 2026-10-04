@@ -78,11 +78,18 @@ export default function ReviewerDashboard() {
                     Status: {p.status}
                   </span>
                 </div>
-                {p.status !== 'EVALUATED' && (
-                  <button onClick={() => openEvaluation(p)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded font-bold shadow transition-colors">
-                    Evaluate Paper
-                  </button>
-                )}
+                <div className="flex gap-2">
+                  {p.pdf_file && (
+                    <a href={p.pdf_file.startsWith('http') ? p.pdf_file : `http://localhost:8000${p.pdf_file}`} target="_blank" rel="noreferrer" className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded font-bold shadow transition-colors text-center flex items-center">
+                      View PDF
+                    </a>
+                  )}
+                  {p.status !== 'EVALUATED' && (
+                    <button onClick={() => openEvaluation(p)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded font-bold shadow transition-colors">
+                      Evaluate Paper
+                    </button>
+                  )}
+                </div>
                 {p.status === 'EVALUATED' && (
                   <span className="text-green-600 font-bold">✓ Completed</span>
                 )}

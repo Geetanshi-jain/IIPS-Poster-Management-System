@@ -50,6 +50,7 @@ class Poster(models.Model):
     title = models.CharField(max_length=200)
     abstract = models.TextField()
     file_url = models.URLField(blank=True, null=True)
+    pdf_file = models.FileField(upload_to='posters/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DRAFT')
 
     def __str__(self):
