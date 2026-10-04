@@ -1,26 +1,17 @@
+flowchart LR
 
-### If you want an actual **Object Diagram**
+    Student1["<b>student1 : Student</b><br/><br/>studentId = S101<br/>name = Geetanshi Jain<br/>email = geetanshi@example.com"]
 
-Your current diagram is technically a **Class Diagram**, not an Object Diagram.
+    Poster1["<b>poster1 : Poster</b><br/><br/>posterId = P001<br/>title = AI in Water Management<br/>abstract = Smart water quality monitoring<br/>status = SUBMITTED"]
 
-For your project, an object-style representation would look conceptually like:
+    Reviewer1["<b>reviewer1 : Reviewer</b><br/><br/>reviewerId = R001<br/>name = Dr. Sharma<br/>expertise = Artificial Intelligence"]
 
-```text
-+----------------------+
-| Student : student1   |
-+----------------------+
-| studentId = S101     |
-| name = Geetanshi     |
-| email = abc@gmail.com|
-+----------------------+
-          |
-          | submits
-          ↓
-+----------------------+
-| Poster : poster1     |
-+----------------------+
-| posterId = P001      |
-| title = AI Research  |
-| abstract = ...       |
-| status = SUBMITTED   |
-+----------------------+
+    Evaluation1["<b>evaluation1 : Evaluation</b><br/><br/>evaluationId = E001<br/>score = 88<br/>comments = Good research work<br/>status = COMPLETED"]
+
+    Event1["<b>event1 : Event</b><br/><br/>eventId = EV001<br/>name = IIPS Research Symposium<br/>venue = IIPS DAVV<br/>year = 2026"]
+
+    Student1 -->|"submits"| Poster1
+    Poster1 -->|"submitted for"| Event1
+    Reviewer1 -->|"evaluates"| Poster1
+    Reviewer1 -->|"creates"| Evaluation1
+    Evaluation1 -->|"for"| Poster1
