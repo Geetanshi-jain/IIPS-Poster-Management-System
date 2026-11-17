@@ -3,6 +3,7 @@ import client from '../../api/client';
 import Navbar from '../../components/Navbar';
 
 export default function AdminDashboard() {
+    // adding states 
     const [events, setEvents] = useState([]);
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
