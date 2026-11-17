@@ -30,11 +30,6 @@ This system saves time, reduces manual work, avoids calculation errors, and make
 [Final Official Leaderboard & Rankings Generated]
 ```
 
-* **Role-Based Portals:** Dedicated, isolated workspaces for **Students**, **Faculty Reviewers**, and **Administrators**.
-* **Dynamic Rubric Configuration:** Event organizers can define custom scoring criteria (e.g., *Innovation*, *Methodology*, *Visual Design*) on the fly without database changes.
-* **Blind, Isolated Reviews:** Reviewers evaluate only posters explicitly assigned to them without altering or viewing other reviewers' marks.
-* **Automated Leaderboards:** Computes exact average grades, resolves ties, and gates publication until authorized by administrators.
-
 ---
 
 ## 🔐 3. Login & Authentication Flow
@@ -69,20 +64,20 @@ The **Administrator** holds full administrative and CRUD privileges across event
 
 ## 🖥️ 5. UI Mockups & Wireframes
 ### 5.1 Admin Control Panel & Event Creator (`/admin`)
-![Admin Control Panel Mockup](<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f9ecde9-4c52-491b-981a-3c175cb5be62" />
-)
+![Admin Control Panel Mockup]<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2f9ecde9-4c52-491b-981a-3c175cb5be62" />
+
 <!-- Local image replace karne ke liye: ![Admin Dashboard](./screenshots/admin_dashboard.png) -->
 
 <!-- Local image replace karne ke liye: ![Assignment Modal](./screenshots/assign_modal.png) -->
 
 ### 5.2 Student Submission Portal (`/student`)
 ![Student Submission Portal Mockup]<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2a90c1b8-03b1-4572-893d-c74a79f51633" />
-)
+
 <!-- Local image replace karne ke liye: ![Student Portal](./screenshots/student_portal.png) -->
 
 ### 5.3 Faculty Reviewer Workspace (`/reviewer`)
-![Faculty Reviewer Workspace Mockup](<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/28aee8f0-025c-4337-a949-a23de4d19827" />
-)
+![Faculty Reviewer Workspace Mockup]<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/28aee8f0-025c-4337-a949-a23de4d19827" />
+
 <!-- Local image replace karne ke liye: !
 
 
