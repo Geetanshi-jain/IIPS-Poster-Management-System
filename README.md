@@ -78,10 +78,6 @@ The **Administrator** holds full administrative and CRUD privileges across event
 ### 5.3 Faculty Reviewer Workspace (`/reviewer`)
 ![Faculty Reviewer Workspace Mockup]<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/28aee8f0-025c-4337-a949-a23de4d19827" />
 
-<!-- Local image replace karne ke liye: !
-
-
-
 
 ## 🚀 6. Quick Start & Setup Guide
 
